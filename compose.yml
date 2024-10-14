@@ -1,0 +1,28 @@
+version: '3.8' # Define a versão do Compose
+
+services:
+  db:
+    image: mysql:8.0 # imagem MySQL 8.0
+    container_name: mysql-container # nome do container
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass # Define a senha do usuário root
+      MYSQL_DATABASE: minha_base_dados  # Define o nome do banco de dados
+      MYSQL_USER: root               # Define o usuário padrão
+      MYSQL_PASSWORD: root_pass      # Define a senha para o usuário criado
+    ports:
+      - "3306:3306" # Expõe a porta 3306 do MySQL no host
+    volumes:
+      - db_data:/var/lib/mysql # Mapeia o volume para persistência dos dados
+
+  api:
+    build: .
+    ports:
+      - "8080:8080" # Mapeia a porta da API
+    environment:
+      - PROFILE=dev
+      - DATABASE_URL=jdbc:mysql://db:3306/minha_base_dados?createDatabaseIfNotExist=true
+      - DATABASE_USER=root
+      - DATABASE_PWD=root_pass
+
+volumes:
+  db_data: # Define um volume nomeado para o banco de dados
